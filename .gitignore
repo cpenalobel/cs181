@@ -66,4 +66,4 @@ target/
 *.csv
 
 # ...but not all CSVs
-!*_.csv
+!*_.*
