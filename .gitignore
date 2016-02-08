@@ -65,5 +65,12 @@ target/
 # Large CSVs
 *.csv
 
-# ...but not all CSVs
-!*_.*
+# All zipped files
+*.gz
+*.7z
+*.zip
+
+# Not all zipped files
+!*_.zip
+!*_.gz
+!*_.7z
