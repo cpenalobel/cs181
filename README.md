@@ -10,3 +10,5 @@ README FOR THE GITHUB REPOSITORY OF TEAM YOU ONLY LEARN ONCE
 
 - sample_edited.ipynb
   An edited version of the sample.ipynb from the source code; contains earlier versions of the Random Forest Regressor and related         functions.
+
+Note: Most of the edited data (with features) is kept locally so as to not clutter the GitHub.
