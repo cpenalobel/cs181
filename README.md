@@ -1,4 +1,4 @@
-# README for the GitHub repository of Team You Only Learn Once
+# README, Team You Only Learn Once
 
 Files (practical_1)
 
