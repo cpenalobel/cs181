@@ -9,5 +9,4 @@ README FOR THE GITHUB REPOSITORY OF TEAM YOU ONLY LEARN ONCE
   Contains functions to run a Random Forest Regressor on a data frame containing features. Also can be set up to do cross-verification     and prepare sets for submission to Kaggle.
 
 - sample_edited.ipynb
-  An edited version of the sample.ipynb from the source code; contains earlier versions of the Random Forest Regressor and related       
-  functions.
+  An edited version of the sample.ipynb from the source code; contains earlier versions of the Random Forest Regressor and related         functions.
