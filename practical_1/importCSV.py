@@ -1,10 +1,10 @@
 from __future__ import print_function
-from random import sample
 import pandas as pd
 import numpy as np
 
 def sampleFiles(n, smple = None, cv=None):
     if not smple:
+        from random import sample
         smple = sample(range(1000),1000)
     for i, n_ in enumerate(smple[:n]):
         print (100*i/float(n), end="\r")
@@ -15,6 +15,6 @@ def sampleFiles(n, smple = None, cv=None):
         except UnboundLocalError:
             data_final = data
     if cv:
-        return data_final, sampleFiles(cv, smple = smple[n:],)
+        return data_final, sampleFiles(cv, smple = smple[n:])
     else:
         return data_final
