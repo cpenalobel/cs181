@@ -29,6 +29,10 @@ Compiled source #
 *.sql
 *.sqlite
 
+*.csv
+*_.csv
+*.xml
+
 # OS generated files #
 ######################
 .DS_Store
