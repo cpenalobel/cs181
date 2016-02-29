@@ -64,6 +64,7 @@ target/
 
 # Large CSVs
 *.csv
+*_.csv
 
 # Large XMLs
 *.xml
