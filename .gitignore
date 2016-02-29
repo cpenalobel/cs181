@@ -65,6 +65,9 @@ target/
 # Large CSVs
 *.csv
 
+# Large XMLs
+*.xml
+
 # All zipped files
 *.gz
 *.7z
