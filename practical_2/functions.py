@@ -14,77 +14,53 @@ import numpy as np
 
 import util
 
-TRAIN_DIR = "train"
-
-call_set = set([])
-
-def add_to_set(tree):
-    for el in tree.iter():
-        call = el.tag
-        call_set.add(call)
-
-def create_data_matrix(start_index=0, end_index=None, direc="train", verbose=False):
-    X = None
+def create_data_matrix(direc, size=None, verbose=False):
+    call_set = set([])
+    call_list = []
+    X_ = []
     classes = []
     ids = [] 
-    i = -1
-    if not end_index:
-        end_index = len(os.listdir(direc))
+    if not size:
+        size = len(os.listdir(direc))
+    dfs_store = True
     for i, datafile in enumerate(os.listdir(direc)):
         if datafile == '.DS_Store':
-            continue
-        if datafile[0] == '.':
-            datafile = datafile[2:]
-        i += 1
-        if i < start_index:
+            dfs_store = False
+            size += 1
             continue 
-        if i >= end_index:
+        if i == size:
             break
         if verbose:
-            print "\rNumber of datafiles loaded:", i+1,
-            
+            print "\rNumber of datafiles loaded:", i+dfs_store,            
         # extract id and true class (if available) from filename
         id_str, clazz = datafile.split('.')[:2]
         ids.append(id_str)
         # add target class if this is training data
         try:
             classes.append(util.malware_classes.index(clazz))
-
         except ValueError:
             # we should only fail to find the label in our list of malware classes
             # if this is test data, which always has an "X" label
             assert clazz == "X"
             classes.append(-1)
-
         # parse file as an xml document
         tree = ET.parse(os.path.join(direc,datafile))
-        add_to_set(tree)
-        this_row = call_feats(tree)
-        if X is None:
-            X = this_row 
-        else:
-            X = np.vstack((X, this_row))
-
+        X_.append(call_feats(tree, call_set, call_list))
+    X = np.array(padding_zeros(X_, call_list))
     return X, np.array(classes), ids
 
-def call_feats(tree):
-    good_calls = ['sleep', 'dump_line']
-
+def call_feats(tree, call_set, call_list):
     call_counter = {}
     for el in tree.iter():
         call = el.tag
         if call not in call_counter:
-            call_counter[call] = 0
+            call_counter[call] = 1            
+        if call not in call_set:
+            call_set.add(call)
+            call_list.append(call) 
         else:
             call_counter[call] += 1
-
-    call_feat_array = np.zeros(len(good_calls))
-    for i in range(len(good_calls)):
-        call = good_calls[i]
-        call_feat_array[i] = 0
-        if call in call_counter:
-            call_feat_array[i] = call_counter[call]
-
+        call_feat_array = [call_counter[c] if c in call_counter else 0 for c in call_list]
     return call_feat_array
     
 #create train and test set
@@ -95,3 +71,6 @@ def split_mask(dftouse, split_size = 0.7):
     mask[itest]=0
     mask = (mask==1)
     return mask
+    
+def padding_zeros(vectors, call_list):
+    return [v + [0]*(len(call_list) - len(v)) for v in vectors]
