@@ -14,12 +14,10 @@ import numpy as np
 
 import util
 
-def create_data_matrix(direc, size=None, verbose=False):
-    call_set = set([])
-    call_list = []
+def create_data_matrix(direc, size=None, verbose=False, call_list = []):
     X_ = []
     classes = []
-    ids = [] 
+    ids = []
     if not size:
         size = len(os.listdir(direc))
     dfs_store = True
@@ -40,24 +38,23 @@ def create_data_matrix(direc, size=None, verbose=False):
             classes.append(util.malware_classes.index(clazz))
         except ValueError:
             # we should only fail to find the label in our list of malware classes
-            # if this is test data, which always has an "X" label
+            # if this is test data, which always has an "X" label       
             assert clazz == "X"
             classes.append(-1)
         # parse file as an xml document
         tree = ET.parse(os.path.join(direc,datafile))
-        X_.append(call_feats(tree, call_set, call_list))
+        X_.append(call_feats(tree, call_list, direc))
     X = np.array(padding_zeros(X_, call_list))
-    return X, np.array(classes), ids
+    return X, np.array(classes), ids, call_list
 
-def call_feats(tree, call_set, call_list):
+def call_feats(tree, call_list, direc):
     call_counter = {}
     for el in tree.iter():
         call = el.tag
+        if call not in call_list and direc == "train":
+            call_list.append(call) 
         if call not in call_counter:
             call_counter[call] = 1            
-        if call not in call_set:
-            call_set.add(call)
-            call_list.append(call) 
         else:
             call_counter[call] += 1
         call_feat_array = [call_counter[c] if c in call_counter else 0 for c in call_list]
@@ -74,3 +71,9 @@ def split_mask(dftouse, split_size = 0.7):
     
 def padding_zeros(vectors, call_list):
     return [v + [0]*(len(call_list) - len(v)) for v in vectors]
+    
+def write_to_file(filename, pred_ids, predictions):
+    with open(filename, "w") as f:
+        f.write("Id,Prediction\n")
+        for pred_id, pred in zip(pred_ids, predictions):
+            f.write(str(pred_id) + "," + str(pred) + "\n")
